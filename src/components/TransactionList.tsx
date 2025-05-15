@@ -39,7 +39,7 @@ const TransactionList = () => {
   const handleFilterChange = (key: keyof FilterOptions, value: any) => {
     setFilterOptions((prev) => {
       const newOptions = { ...prev, [key]: value };
-      if (value === "" || value === undefined) {
+      if (value === "all" || value === undefined) {
         delete newOptions[key];
       }
       return newOptions;
@@ -126,16 +126,16 @@ const TransactionList = () => {
 
         <div className="flex gap-2 flex-wrap">
           <Select
-            value={filterOptions.type || ""}
+            value={filterOptions.type || "all"}
             onValueChange={(value) => 
-              handleFilterChange("type", value ? value as TransactionType : undefined)
+              handleFilterChange("type", value !== "all" ? value as TransactionType : undefined)
             }
           >
             <SelectTrigger className="w-[130px]">
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="income">
                 <div className="flex items-center">
                   <ArrowUp className="mr-2 h-4 w-4 text-green-600" />
@@ -152,16 +152,16 @@ const TransactionList = () => {
           </Select>
 
           <Select
-            value={filterOptions.category || ""}
+            value={filterOptions.category || "all"}
             onValueChange={(value) => 
-              handleFilterChange("category", value ? value as TransactionCategory : undefined)
+              handleFilterChange("category", value !== "all" ? value as TransactionCategory : undefined)
             }
           >
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {Object.entries(categoryInfo).map(([key, {label, icon}]) => (
                 <SelectItem key={key} value={key}>
                   <div className="flex items-center space-x-2">
