@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/popover";
 import { Transaction, TransactionCategory, TransactionType } from "@/types";
 import { useTransactions } from "@/contexts/TransactionContext";
-import { categoryInfo } from "./CategoryLabel";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { id } from 'date-fns/locale';
@@ -30,7 +29,7 @@ interface TransactionFormProps {
 }
 
 const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
-  const { addTransaction, updateTransaction } = useTransactions();
+  const { addTransaction, updateTransaction, categoryInfo } = useTransactions();
   const isEditing = !!initialData;
 
   const [description, setDescription] = useState(initialData?.description || "");
@@ -67,8 +66,11 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
     }
   };
 
+  // Get all categories
+  const allCategories = Object.entries(categoryInfo);
+
   // Filter categories based on the selected type
-  const filteredCategories = Object.entries(categoryInfo).filter(([key]) => {
+  const filteredCategories = allCategories.filter(([key]) => {
     if (type === "income") {
       return key.includes("income") || key === "salary" || key === "investment" || key === "gift";
     } else {
@@ -130,7 +132,11 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
         <Label>Tipe</Label>
         <RadioGroup
           defaultValue={type}
-          onValueChange={(value) => setType(value as TransactionType)}
+          onValueChange={(value) => {
+            setType(value as TransactionType);
+            // Reset category when type changes to ensure it's valid for the new type
+            setCategory(value === "income" ? "other-income" : "other-expense");
+          }}
           className="flex space-x-1"
         >
           <div className="flex items-center space-x-2 rounded-md border p-2 flex-1">
@@ -151,7 +157,7 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
       <div className="space-y-1">
         <Label htmlFor="category">Kategori</Label>
         <Select
-          defaultValue={category}
+          value={category}
           onValueChange={(value) => setCategory(value as TransactionCategory)}
         >
           <SelectTrigger>

@@ -1,7 +1,9 @@
 
 import { TransactionCategory, CategoryInfo } from "@/types";
+import { useTransactions } from "@/contexts/TransactionContext";
 
-const categoryInfo: Record<TransactionCategory, CategoryInfo> = {
+// Default category info yang akan digunakan sebagai fallback
+export const categoryInfo: Record<TransactionCategory, CategoryInfo> = {
   // Income categories
   "salary": { 
     label: "Gaji", 
@@ -78,7 +80,16 @@ interface CategoryLabelProps {
 }
 
 const CategoryLabel = ({ category, showIcon = true }: CategoryLabelProps) => {
-  const { label, color, icon } = categoryInfo[category];
+  const { categoryInfo: contextCategoryInfo } = useTransactions();
+  
+  // Gunakan kategori dari context jika ada, atau gunakan default
+  const info = contextCategoryInfo[category] || categoryInfo[category as TransactionCategory] || {
+    label: category,
+    color: "bg-gray-500",
+    icon: "🏷️"
+  };
+  
+  const { label, color, icon } = info;
   
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white ${color}`}>

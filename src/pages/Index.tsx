@@ -7,7 +7,8 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TransactionForm from "@/components/TransactionForm";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Plus, Filter } from "lucide-react";
 
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -19,13 +20,24 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl md:text-3xl font-bold">Pencatat Keuangan</h1>
-              <Button 
-                variant="outline"
-                onClick={() => setIsFormOpen(true)}
-                className="bg-white/10 border-white/20 hover:bg-white/20 text-white"
-              >
-                <Plus className="h-4 w-4 mr-2" /> Tambah Transaksi
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  asChild
+                  className="bg-white/10 border-white/20 hover:bg-white/20 text-white"
+                >
+                  <Link to="/categories">
+                    <Filter className="h-4 w-4 mr-2" /> Kelola Kategori
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => setIsFormOpen(true)}
+                  className="bg-white/10 border-white/20 hover:bg-white/20 text-white"
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Tambah Transaksi
+                </Button>
+              </div>
             </div>
           </div>
         </header>

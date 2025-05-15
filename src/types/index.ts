@@ -16,7 +16,9 @@ export type TransactionCategory =
   | 'shopping'
   | 'health'
   | 'education'
-  | 'other-expense';
+  | 'other-expense'
+  // Allow for dynamic categories
+  | string;
 
 export interface Transaction {
   id: string;

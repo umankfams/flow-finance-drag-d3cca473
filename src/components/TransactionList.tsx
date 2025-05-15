@@ -17,15 +17,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { categoryInfo } from "./CategoryLabel";
 import TransactionForm from "./TransactionForm";
 import { FilterOptions, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { ArrowDown, ArrowUp, Search, Plus } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import { id } from "date-fns/locale";
+import { id } from 'date-fns/locale';
 
 const TransactionList = () => {
-  const { filteredTransactions, filterOptions, setFilterOptions } = useTransactions();
+  const { filteredTransactions, filterOptions, setFilterOptions, categoryInfo } = useTransactions();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [searchTerm, setSearchTerm] = useState(filterOptions.searchTerm || "");
@@ -40,10 +39,14 @@ const TransactionList = () => {
 
   const handleFilterChange = (key: keyof FilterOptions, value: any) => {
     setFilterOptions((prev) => {
-      const newOptions = { ...prev, [key]: value };
+      const newOptions = { ...prev };
+      
       if (value === "all" || value === undefined) {
         delete newOptions[key];
+      } else {
+        newOptions[key] = value;
       }
+      
       return newOptions;
     });
   };
@@ -84,7 +87,9 @@ const TransactionList = () => {
 
   // Sort dates from newest to oldest
   const sortedDates = Object.keys(groupedTransactions).sort((a, b) => {
-    return new Date(parseISO(b)).getTime() - new Date(parseISO(a)).getTime();
+    const dateA = parseISO(format(new Date(a), "yyyy-MM-dd"));
+    const dateB = parseISO(format(new Date(b), "yyyy-MM-dd"));
+    return dateB.getTime() - dateA.getTime();
   });
 
   // Drag and drop functions
@@ -95,6 +100,20 @@ const TransactionList = () => {
   const handleDragEnd = () => {
     setDraggedItem(null);
   };
+
+  // Get all categories for the select dropdown
+  const allCategories = Object.entries(categoryInfo);
+  
+  // Filter categories by type if a type filter is active
+  const availableCategories = allCategories.filter(([key, info]) => {
+    if (!filterOptions.type) return true;
+    
+    if (filterOptions.type === "income") {
+      return key.includes("income") || key === "salary" || key === "investment" || key === "gift";
+    } else {
+      return !(key.includes("income") || key === "salary" || key === "investment" || key === "gift");
+    }
+  });
 
   return (
     <div className="space-y-4 bg-white p-5 rounded-xl shadow-sm">
@@ -159,7 +178,7 @@ const TransactionList = () => {
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
               <SelectItem value="all">Semua Kategori</SelectItem>
-              {Object.entries(categoryInfo).map(([key, {label, icon}]) => (
+              {availableCategories.map(([key, {label, icon}]) => (
                 <SelectItem key={key} value={key}>
                   <div className="flex items-center space-x-2">
                     <span>{icon}</span>

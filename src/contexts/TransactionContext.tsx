@@ -1,7 +1,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Transaction, TransactionType, FilterOptions, TransactionCategory } from "../types";
+import { Transaction, TransactionType, FilterOptions, TransactionCategory, CategoryInfo } from "../types";
 import { useToast } from "@/hooks/use-toast";
+import { categoryInfo as defaultCategoryInfo } from "@/components/CategoryLabel";
 
 interface TransactionContextType {
   transactions: Transaction[];
@@ -15,6 +16,8 @@ interface TransactionContextType {
   totalIncome: number;
   totalExpense: number;
   balance: number;
+  updateCategoryInfo: (category: TransactionCategory, info: CategoryInfo) => void;
+  categoryInfo: Record<TransactionCategory, CategoryInfo>;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -38,32 +41,32 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     const sampleData: Transaction[] = [
       {
         id: "1",
-        description: "Salary",
-        amount: 5000,
+        description: "Gaji Bulanan",
+        amount: 5000000,
         date: "2025-05-10",
         type: "income",
         category: "salary"
       },
       {
         id: "2",
-        description: "Groceries",
-        amount: 150,
+        description: "Belanja Bulanan",
+        amount: 1500000,
         date: "2025-05-12",
         type: "expense",
         category: "food"
       },
       {
         id: "3",
-        description: "Rent",
-        amount: 1200,
+        description: "Sewa Apartemen",
+        amount: 2500000,
         date: "2025-05-05",
         type: "expense",
         category: "housing"
       },
       {
         id: "4",
-        description: "Investment return",
-        amount: 300,
+        description: "Dividen Investasi",
+        amount: 750000,
         date: "2025-05-08",
         type: "income",
         category: "investment"
@@ -72,6 +75,12 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     
     const savedData = localStorage.getItem("transactions");
     return savedData ? JSON.parse(savedData) : sampleData;
+  });
+  
+  // Load category info from localStorage or use default
+  const [categoryInfo, setCategoryInfo] = useState<Record<TransactionCategory, CategoryInfo>>(() => {
+    const savedCategoryInfo = localStorage.getItem("categoryInfo");
+    return savedCategoryInfo ? JSON.parse(savedCategoryInfo) : defaultCategoryInfo;
   });
   
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>(transactions);
@@ -95,6 +104,11 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     applyFilters(filterOptions);
   }, [transactions]);
 
+  // Save category info to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("categoryInfo", JSON.stringify(categoryInfo));
+  }, [categoryInfo]);
+
   const addTransaction = (transactionData: Omit<Transaction, "id">) => {
     const newTransaction: Transaction = {
       ...transactionData,
@@ -104,8 +118,8 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     setTransactions(prev => [...prev, newTransaction]);
     
     toast({
-      title: "Transaction added",
-      description: `${transactionData.description} for ${transactionData.amount} added successfully.`
+      title: "Transaksi ditambahkan",
+      description: `${transactionData.description} senilai ${transactionData.amount} berhasil ditambahkan.`
     });
   };
 
@@ -115,8 +129,8 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     );
     
     toast({
-      title: "Transaction updated",
-      description: `${transaction.description} updated successfully.`
+      title: "Transaksi diperbarui",
+      description: `${transaction.description} berhasil diperbarui.`
     });
   };
 
@@ -127,10 +141,17 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     
     if (transactionToDelete) {
       toast({
-        title: "Transaction deleted",
-        description: `${transactionToDelete.description} deleted successfully.`
+        title: "Transaksi dihapus",
+        description: `${transactionToDelete.description} berhasil dihapus.`
       });
     }
+  };
+
+  const updateCategoryInfo = (category: TransactionCategory, info: CategoryInfo) => {
+    setCategoryInfo(prev => ({
+      ...prev,
+      [category]: info
+    }));
   };
 
   const applyFilters = (options: FilterOptions) => {
@@ -154,10 +175,10 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     
     if (options.searchTerm) {
       const term = options.searchTerm.toLowerCase();
-      result = result.filter(t => 
-        t.description.toLowerCase().includes(term) || 
-        t.category.toLowerCase().includes(term)
-      );
+      result = result.filter(t => {
+        const categoryLabel = categoryInfo[t.category]?.label.toLowerCase() || t.category.toLowerCase();
+        return t.description.toLowerCase().includes(term) || categoryLabel.includes(term);
+      });
     }
     
     setFilteredTransactions(result);
@@ -179,7 +200,9 @@ export const TransactionProvider = ({ children }: TransactionProviderProps) => {
     setFilterOptions,
     totalIncome,
     totalExpense,
-    balance
+    balance,
+    updateCategoryInfo,
+    categoryInfo
   };
 
   return (
