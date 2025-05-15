@@ -1,13 +1,68 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { TransactionProvider } from "@/contexts/TransactionContext";
+import DashboardSummary from "@/components/DashboardSummary";
+import TransactionList from "@/components/TransactionList";
+import FinancialChart from "@/components/FinancialChart";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TransactionForm from "@/components/TransactionForm";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const Index = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <TransactionProvider>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-finance-teal text-white py-6">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl md:text-3xl font-bold">Finance Tracker</h1>
+              <Button 
+                variant="outline"
+                onClick={() => setIsFormOpen(true)}
+                className="bg-white/10 border-white/20 hover:bg-white/20 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" /> Add Transaction
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-8 space-y-6">
+          <DashboardSummary />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <FinancialChart type="expense" />
+            </div>
+            <div className="space-y-6">
+              <FinancialChart type="income" />
+            </div>
+          </div>
+          
+          <TransactionList />
+        </main>
+
+        <footer className="bg-white border-t py-4">
+          <div className="container mx-auto px-4">
+            <p className="text-center text-sm text-gray-500">
+              © {new Date().getFullYear()} Finance Tracker. All rights reserved.
+            </p>
+          </div>
+        </footer>
+        
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Transaction</DialogTitle>
+            </DialogHeader>
+            <TransactionForm onComplete={() => setIsFormOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
-    </div>
+    </TransactionProvider>
   );
 };
 
