@@ -6,8 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number, currency = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatCurrency(amount: number, currency = 'IDR'): string {
+  return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 0,

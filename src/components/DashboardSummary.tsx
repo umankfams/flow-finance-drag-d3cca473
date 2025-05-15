@@ -8,21 +8,21 @@ const DashboardSummary = () => {
 
   const summaryItems = [
     {
-      title: "Total Balance",
+      title: "Saldo Total",
       value: balance,
       icon: <DollarSign className="text-finance-darkblue" />,
       color: "bg-finance-lightblue",
       textColor: balance >= 0 ? "text-green-600" : "text-red-600",
     },
     {
-      title: "Total Income",
+      title: "Total Pemasukan",
       value: totalIncome,
       icon: <ArrowUp className="text-green-600" />,
       color: "bg-green-50",
       textColor: "text-green-600",
     },
     {
-      title: "Total Expense",
+      title: "Total Pengeluaran",
       value: totalExpense,
       icon: <ArrowDown className="text-secondary" />,
       color: "bg-red-50",

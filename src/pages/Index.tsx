@@ -18,13 +18,13 @@ const Index = () => {
         <header className="bg-finance-teal text-white py-6">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl md:text-3xl font-bold">Finance Tracker</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">Pencatat Keuangan</h1>
               <Button 
                 variant="outline"
                 onClick={() => setIsFormOpen(true)}
                 className="bg-white/10 border-white/20 hover:bg-white/20 text-white"
               >
-                <Plus className="h-4 w-4 mr-2" /> Add Transaction
+                <Plus className="h-4 w-4 mr-2" /> Tambah Transaksi
               </Button>
             </div>
           </div>
@@ -48,7 +48,7 @@ const Index = () => {
         <footer className="bg-white border-t py-4">
           <div className="container mx-auto px-4">
             <p className="text-center text-sm text-gray-500">
-              © {new Date().getFullYear()} Finance Tracker. All rights reserved.
+              © {new Date().getFullYear()} Pencatat Keuangan. Seluruh hak cipta dilindungi.
             </p>
           </div>
         </footer>
@@ -56,7 +56,7 @@ const Index = () => {
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Transaction</DialogTitle>
+              <DialogTitle>Tambah Transaksi Baru</DialogTitle>
             </DialogHeader>
             <TransactionForm onComplete={() => setIsFormOpen(false)} />
           </DialogContent>

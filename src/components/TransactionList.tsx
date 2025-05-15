@@ -21,6 +21,8 @@ import { categoryInfo } from "./CategoryLabel";
 import TransactionForm from "./TransactionForm";
 import { FilterOptions, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { ArrowDown, ArrowUp, Search, Plus } from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { id } from "date-fns/locale";
 
 const TransactionList = () => {
   const { filteredTransactions, filterOptions, setFilterOptions } = useTransactions();
@@ -71,12 +73,7 @@ const TransactionList = () => {
   
   filteredTransactions.forEach(transaction => {
     const date = new Date(transaction.date);
-    const dateString = date.toLocaleDateString("en-US", {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    const dateString = format(date, "EEEE, dd MMMM yyyy", { locale: id });
     
     if (!groupedTransactions[dateString]) {
       groupedTransactions[dateString] = [];
@@ -87,7 +84,7 @@ const TransactionList = () => {
 
   // Sort dates from newest to oldest
   const sortedDates = Object.keys(groupedTransactions).sort((a, b) => {
-    return new Date(b).getTime() - new Date(a).getTime();
+    return new Date(parseISO(b)).getTime() - new Date(parseISO(a)).getTime();
   });
 
   // Drag and drop functions
@@ -102,14 +99,14 @@ const TransactionList = () => {
   return (
     <div className="space-y-4 bg-white p-5 rounded-xl shadow-sm">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Transactions</h2>
+        <h2 className="text-xl font-semibold">Transaksi</h2>
         <Button
           size="sm"
           onClick={handleAddTransaction}
           className="bg-finance-teal hover:bg-finance-teal/90"
         >
           <Plus className="h-4 w-4 mr-1" />
-          Add New
+          Tambah Baru
         </Button>
       </div>
 
@@ -117,7 +114,7 @@ const TransactionList = () => {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search transactions..."
+            placeholder="Cari transaksi..."
             className="pl-9"
             value={searchTerm}
             onChange={handleSearchChange}
@@ -132,20 +129,20 @@ const TransactionList = () => {
             }
           >
             <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="All Types" />
+              <SelectValue placeholder="Semua Tipe" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="all">Semua Tipe</SelectItem>
               <SelectItem value="income">
                 <div className="flex items-center">
                   <ArrowUp className="mr-2 h-4 w-4 text-green-600" />
-                  Income
+                  Pemasukan
                 </div>
               </SelectItem>
               <SelectItem value="expense">
                 <div className="flex items-center">
                   <ArrowDown className="mr-2 h-4 w-4 text-secondary" />
-                  Expense
+                  Pengeluaran
                 </div>
               </SelectItem>
             </SelectContent>
@@ -158,10 +155,10 @@ const TransactionList = () => {
             }
           >
             <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="All Categories" />
+              <SelectValue placeholder="Semua Kategori" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">Semua Kategori</SelectItem>
               {Object.entries(categoryInfo).map(([key, {label, icon}]) => (
                 <SelectItem key={key} value={key}>
                   <div className="flex items-center space-x-2">
@@ -206,8 +203,8 @@ const TransactionList = () => {
           <div className="text-center py-8">
             <p className="text-muted-foreground">
               {searchTerm || Object.keys(filterOptions).length > 0 
-                ? "No transactions match your filters." 
-                : "Drag and drop transactions here."}
+                ? "Tidak ada transaksi yang cocok dengan filter Anda." 
+                : "Seret dan lepas transaksi di sini."}
             </p>
           </div>
         )}
@@ -217,7 +214,7 @@ const TransactionList = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingTransaction ? "Edit Transaction" : "Add New Transaction"}
+              {editingTransaction ? "Edit Transaksi" : "Tambah Transaksi Baru"}
             </DialogTitle>
           </DialogHeader>
           <TransactionForm 

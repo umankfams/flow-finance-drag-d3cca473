@@ -4,69 +4,69 @@ import { TransactionCategory, CategoryInfo } from "@/types";
 const categoryInfo: Record<TransactionCategory, CategoryInfo> = {
   // Income categories
   "salary": { 
-    label: "Salary", 
+    label: "Gaji", 
     color: "bg-green-500", 
     icon: "💼" 
   },
   "investment": { 
-    label: "Investment", 
+    label: "Investasi", 
     color: "bg-blue-500", 
     icon: "📈" 
   },
   "gift": { 
-    label: "Gift", 
+    label: "Hadiah", 
     color: "bg-purple-500", 
     icon: "🎁" 
   },
   "other-income": { 
-    label: "Other Income", 
+    label: "Pendapatan Lain", 
     color: "bg-teal-500", 
     icon: "💰" 
   },
   
   // Expense categories
   "food": { 
-    label: "Food & Dining", 
+    label: "Makanan & Minuman", 
     color: "bg-amber-500", 
     icon: "🍔" 
   },
   "transportation": { 
-    label: "Transportation", 
+    label: "Transportasi", 
     color: "bg-indigo-500", 
     icon: "🚗" 
   },
   "housing": { 
-    label: "Housing", 
+    label: "Perumahan", 
     color: "bg-pink-500", 
     icon: "🏠" 
   },
   "utilities": { 
-    label: "Utilities", 
+    label: "Utilitas", 
     color: "bg-cyan-500", 
     icon: "💡" 
   },
   "entertainment": { 
-    label: "Entertainment", 
+    label: "Hiburan", 
     color: "bg-violet-500", 
     icon: "🎬" 
   },
   "shopping": { 
-    label: "Shopping", 
+    label: "Belanja", 
     color: "bg-fuchsia-500", 
     icon: "🛍️" 
   },
   "health": { 
-    label: "Health", 
+    label: "Kesehatan", 
     color: "bg-rose-500", 
     icon: "🏥" 
   },
   "education": { 
-    label: "Education", 
+    label: "Pendidikan", 
     color: "bg-lime-500", 
     icon: "📚" 
   },
   "other-expense": { 
-    label: "Other Expense", 
+    label: "Pengeluaran Lain", 
     color: "bg-slate-500", 
     icon: "📝" 
   }

@@ -22,6 +22,7 @@ import { useTransactions } from "@/contexts/TransactionContext";
 import { categoryInfo } from "./CategoryLabel";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { id } from 'date-fns/locale';
 
 interface TransactionFormProps {
   onComplete?: () => void;
@@ -78,10 +79,10 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-1">
       <div className="space-y-1">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">Deskripsi</Label>
         <Input
           id="description"
-          placeholder="Enter transaction description"
+          placeholder="Masukkan deskripsi transaksi"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
@@ -89,13 +90,13 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="amount">Amount</Label>
+        <Label htmlFor="amount">Jumlah</Label>
         <Input
           id="amount"
           type="number"
           min="0"
           step="0.01"
-          placeholder="0.00"
+          placeholder="0"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
@@ -103,7 +104,7 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
       </div>
 
       <div className="space-y-1">
-        <Label>Date</Label>
+        <Label>Tanggal</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -111,7 +112,7 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
               className="w-full justify-start text-left font-normal"
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : "Pick a date"}
+              {date ? format(date, "PPP", { locale: id }) : "Pilih tanggal"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
@@ -119,13 +120,14 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
               mode="single"
               selected={date}
               onSelect={(newDate) => newDate && setDate(newDate)}
+              locale={id}
             />
           </PopoverContent>
         </Popover>
       </div>
 
       <div className="space-y-1">
-        <Label>Type</Label>
+        <Label>Tipe</Label>
         <RadioGroup
           defaultValue={type}
           onValueChange={(value) => setType(value as TransactionType)}
@@ -134,26 +136,26 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
           <div className="flex items-center space-x-2 rounded-md border p-2 flex-1">
             <RadioGroupItem value="expense" id="expense" />
             <Label htmlFor="expense" className="cursor-pointer flex-1">
-              Expense
+              Pengeluaran
             </Label>
           </div>
           <div className="flex items-center space-x-2 rounded-md border p-2 flex-1">
             <RadioGroupItem value="income" id="income" />
             <Label htmlFor="income" className="cursor-pointer flex-1">
-              Income
+              Pemasukan
             </Label>
           </div>
         </RadioGroup>
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="category">Category</Label>
+        <Label htmlFor="category">Kategori</Label>
         <Select
           defaultValue={category}
           onValueChange={(value) => setCategory(value as TransactionCategory)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select category" />
+            <SelectValue placeholder="Pilih kategori" />
           </SelectTrigger>
           <SelectContent>
             {filteredCategories.map(([key, { label, icon }]) => (
@@ -169,7 +171,7 @@ const TransactionForm = ({ onComplete, initialData }: TransactionFormProps) => {
       </div>
 
       <Button type="submit" className="w-full">
-        {isEditing ? "Update" : "Add"} Transaction
+        {isEditing ? "Perbarui" : "Tambah"} Transaksi
       </Button>
     </form>
   );

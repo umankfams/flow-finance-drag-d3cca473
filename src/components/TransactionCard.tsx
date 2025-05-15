@@ -2,6 +2,8 @@
 import { Transaction } from "@/types";
 import CategoryLabel from "./CategoryLabel";
 import { formatCurrency } from "@/lib/utils";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 interface TransactionCardProps {
   transaction: Transaction;
@@ -17,11 +19,7 @@ const TransactionCard = ({
   const { description, amount, date, type, category } = transaction;
   
   // Format the date to a more readable format
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  });
+  const formattedDate = format(new Date(date), "d MMM yyyy", { locale: id });
 
   return (
     <div 
