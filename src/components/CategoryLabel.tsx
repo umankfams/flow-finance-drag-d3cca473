@@ -100,4 +100,3 @@ const CategoryLabel = ({ category, showIcon = true }: CategoryLabelProps) => {
 };
 
 export default CategoryLabel;
-export { categoryInfo };
