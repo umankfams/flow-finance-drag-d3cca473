@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import TransactionForm from "./TransactionForm";
 import { FilterOptions, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { ArrowDown, ArrowUp, Search, Plus } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { id } from 'date-fns/locale';
 
 const TransactionList = () => {
@@ -71,25 +71,58 @@ const TransactionList = () => {
     }
   };
   
-  // Group transactions by date
+  // Group transactions by date with better error handling
   const groupedTransactions: Record<string, Transaction[]> = {};
   
   filteredTransactions.forEach(transaction => {
-    const date = new Date(transaction.date);
-    const dateString = format(date, "EEEE, dd MMMM yyyy", { locale: id });
-    
-    if (!groupedTransactions[dateString]) {
-      groupedTransactions[dateString] = [];
+    try {
+      // Parse the date and validate it
+      const date = new Date(transaction.date);
+      
+      // Check if the date is valid
+      if (!isValid(date)) {
+        console.warn(`Invalid date found in transaction ${transaction.id}: ${transaction.date}`);
+        return; // Skip this transaction
+      }
+      
+      const dateString = format(date, "EEEE, dd MMMM yyyy", { locale: id });
+      
+      if (!groupedTransactions[dateString]) {
+        groupedTransactions[dateString] = [];
+      }
+      
+      groupedTransactions[dateString].push(transaction);
+    } catch (error) {
+      console.error(`Error processing date for transaction ${transaction.id}:`, error);
+      // Skip this transaction if date processing fails
     }
-    
-    groupedTransactions[dateString].push(transaction);
   });
 
-  // Sort dates from newest to oldest
+  // Sort dates from newest to oldest with better error handling
   const sortedDates = Object.keys(groupedTransactions).sort((a, b) => {
-    const dateA = parseISO(format(new Date(a), "yyyy-MM-dd"));
-    const dateB = parseISO(format(new Date(b), "yyyy-MM-dd"));
-    return dateB.getTime() - dateA.getTime();
+    try {
+      // Extract the first transaction from each group to get the original date
+      const transactionsA = groupedTransactions[a];
+      const transactionsB = groupedTransactions[b];
+      
+      if (!transactionsA?.length || !transactionsB?.length) {
+        return 0;
+      }
+      
+      const dateA = new Date(transactionsA[0].date);
+      const dateB = new Date(transactionsB[0].date);
+      
+      // Validate dates before comparing
+      if (!isValid(dateA) || !isValid(dateB)) {
+        console.warn('Invalid date found during sorting');
+        return 0;
+      }
+      
+      return dateB.getTime() - dateA.getTime();
+    } catch (error) {
+      console.error('Error sorting dates:', error);
+      return 0;
+    }
   });
 
   // Drag and drop functions
