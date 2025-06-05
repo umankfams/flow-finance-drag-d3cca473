@@ -1,10 +1,22 @@
 
 import { useTransactions } from "@/contexts/TransactionContext";
 import { formatCurrency } from "@/lib/utils";
-import { ArrowDown, ArrowUp, DollarSign } from "lucide-react";
+import { ArrowDown, ArrowUp, DollarSign, Loader2 } from "lucide-react";
 
 const DashboardSummary = () => {
-  const { totalIncome, totalExpense, balance } = useTransactions();
+  const { totalIncome, totalExpense, balance, loading } = useTransactions();
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-gray-100 p-6 rounded-xl shadow-sm flex items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const summaryItems = [
     {
