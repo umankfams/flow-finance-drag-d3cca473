@@ -18,7 +18,17 @@ export const useSupabaseTransactions = () => {
 
       if (error) throw error;
 
-      setTransactions(data || []);
+      // Convert Supabase data to Transaction type with proper casting
+      const typedTransactions: Transaction[] = (data || []).map(item => ({
+        id: item.id,
+        description: item.description,
+        amount: item.amount,
+        date: item.date,
+        type: item.type as 'income' | 'expense',
+        category: item.category
+      }));
+
+      setTransactions(typedTransactions);
     } catch (error) {
       console.error('Error fetching transactions:', error);
       toast({
@@ -41,14 +51,24 @@ export const useSupabaseTransactions = () => {
 
       if (error) throw error;
 
-      setTransactions(prev => [data, ...prev]);
+      // Convert Supabase data to Transaction type with proper casting
+      const typedTransaction: Transaction = {
+        id: data.id,
+        description: data.description,
+        amount: data.amount,
+        date: data.date,
+        type: data.type as 'income' | 'expense',
+        category: data.category
+      };
+
+      setTransactions(prev => [typedTransaction, ...prev]);
       
       toast({
         title: "Transaksi ditambahkan",
         description: `${transactionData.description} berhasil ditambahkan.`
       });
 
-      return data;
+      return typedTransaction;
     } catch (error) {
       console.error('Error adding transaction:', error);
       toast({
@@ -77,8 +97,18 @@ export const useSupabaseTransactions = () => {
 
       if (error) throw error;
 
+      // Convert Supabase data to Transaction type with proper casting
+      const typedTransaction: Transaction = {
+        id: data.id,
+        description: data.description,
+        amount: data.amount,
+        date: data.date,
+        type: data.type as 'income' | 'expense',
+        category: data.category
+      };
+
       setTransactions(prev => 
-        prev.map(t => t.id === transaction.id ? data : t)
+        prev.map(t => t.id === transaction.id ? typedTransaction : t)
       );
 
       toast({
@@ -86,7 +116,7 @@ export const useSupabaseTransactions = () => {
         description: `${transaction.description} berhasil diperbarui.`
       });
 
-      return data;
+      return typedTransaction;
     } catch (error) {
       console.error('Error updating transaction:', error);
       toast({
